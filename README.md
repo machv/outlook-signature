@@ -16,3 +16,25 @@ When app is started it accepts one parameter that should contains path to a Word
 It replaces parameters, sets this document as default signature and locks registry to block changes to the signature by end user (to force using corporate template by everyone).
 
 If Outlook was running while running the tool, Outlook application needs to be restarted to see the signature.
+
+## Supported variables
+
+### 1:1 mapped from Active Directory (LDAP):
+ - `%givenName%`
+ - `%sn%`
+ - `%displayName%`
+ - `%department%`
+ - `%company%`
+ - `%telephoneNumber%`
+ - `%mobile%`
+ - `%mail%`
+ - `%physicalDeliveryOfficeName%`
+ - `%postalCode%`
+ - `%streetAddress%`
+ - `%title%`
+ - `%l%`
+ - `%st%`
+
+### Special
+ - `%c%` = Expanded country name
+ - `%QR%` = QR Code image with VCARD inside
