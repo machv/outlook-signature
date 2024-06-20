@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using OpenXmlPowerTools;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
@@ -59,17 +60,21 @@ namespace Mail.OutlookSignature
                     return;
                 }
 
-                bool canChangeSignature = false;
-                //foreach (string group in DirectoryServicesUtilities.GetGroupsOfUser(Environment.UserName))
-                //{
-                //    if (group == "Change Signature Allowed")
-                //        canChangeSignature = true;
-                //}
+                bool canChangeSignature = Properties.Settings.Default.LockSignature;
+
+                if(!string.IsNullOrWhiteSpace(Properties.Settings.Default.LockSignatureOverrideGroupName))
+                {
+                    foreach (string groupName in DirectoryServicesUtilities.GetGroupsOfUser(Environment.UserName))
+                    {
+                        if (groupName == Properties.Settings.Default.LockSignatureOverrideGroupName)
+                            canChangeSignature = true;
+                    }
+                }
 
                 Dictionary<string, string> variables = GetLdapVariables();
 
                 string template = args[0];
-                string signatureName = "Corporate signature";
+                string signatureName = Properties.Settings.Default.SignatureName;
 
                 string temp = System.IO.Path.GetTempFileName();
                 System.IO.File.Copy(template, temp, true);
