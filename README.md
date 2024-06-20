@@ -24,31 +24,48 @@ If Outlook was running while running the tool, Outlook application needs to be r
 
 Generated signature is stored in `%appdata%\Microsoft\Signatures` folder.
 
-
-
 ## Supported variables in template
 
-### 1:1 mapped from Active Directory (LDAP):
- - `%givenName%`
- - `%sn%`
- - `%displayName%`
- - `%department%`
- - `%company%`
- - `%telephoneNumber%`
- - `%mobile%`
- - `%mail%`
- - `%physicalDeliveryOfficeName%`
- - `%postalCode%`
- - `%streetAddress%`
- - `%title%`
- - `%l%`
- - `%st%`
+| Variable                        | Source LDAP field            | Description         | ADUC Tab     |
+| ------------------------------- | ---------------------------- | ------------------- | ------------ |
+|  `%givenName%`                  | `givenName`                  | First name          | General      |
+|  `%sn%`                         | `sn`                         | Last name           | General      |
+|  `%displayName%`                | `displayName`                | Display name        | General      |
+|  `%department%`                 | `department`                 | Department          | Organization |
+|  `%company%`                    | `company`                    | Company             | Organization |
+|  `%telephoneNumber%`            | `telephoneNumber`            | Telephone number    | General      |
+|  `%mobile%`                     | `mobile`                     | Mobile              | Telephones   |
+|  `%mail%`                       | `mail`                       | E-Mail              | General      |
+|  `%physicalDeliveryOfficeName%` | `physicalDeliveryOfficeName` | Office              | General      |
+|  `%postalCode%`                 | `postalCode`                 | Zip/Postal Code     | Address      |
+|  `%streetAddress%`              | `streetAddress`              | Street              | Address      |
+|  `%title%`                      | `title`                      | Job Title           | Organization |
+|  `%l%`                          | `l`                          | City                | Address      |
+|  `%st%`                         | `st`                         | State/province      | Address      |
+|  `%sc%`                         | `c`                          | Country             | Address      |
+| `%country%`                     |                              | Expanded country name using internal dictionary | -- |
+| `%QR%`                          |                              | QR Code with VCARD content | -- |
 
-### Special
- - `%c%` = Expanded country name
- - `%QR%` = QR Code image with VCARD inside
+### Example
 
+### Word template document
+![Word template](docs/word-template.png | width=200)
+
+### Group policy Logon script
+Set-Signature.ps1
+```powershell
+Start-Process -FilePath "$($PSScriptRoot)\App\Mail.OutlookSignature.exe" `
+    -WorkingDirectory $PSScriptRoot -ArgumentList (Join-Path $PSScriptRoot "template.docx") `
+    -NoNewWindow `
+    -Wait
+``` 
+
+![Logon script](docs/logon-script.png | width=200)
+
+### Generated signature in Outlook
+![Generated signature](docs/generated-signature.png | width=200)
 
 ## Dependencies
 
-Uses https://github.com/OfficeDev/Open-Xml-PowerTools for Word document parsing.
+- https://github.com/OfficeDev/Open-Xml-PowerTools for Word document parsing
+- https://www.nuget.org/packages/MessagingToolkit.QRCode for QR code image generation
