@@ -53,7 +53,7 @@ Generated signature is stored in `%appdata%\Microsoft\Signatures` folder.
 <img src="docs/word-template.png" width="600">
 
 ### Group policy Logon script
-Set-Signature.ps1
+`Set-Signature.ps1`
 ```powershell
 Start-Process -FilePath "$($PSScriptRoot)\App\Mail.OutlookSignature.exe" `
     -WorkingDirectory $PSScriptRoot -ArgumentList (Join-Path $PSScriptRoot "template.docx") `
@@ -61,11 +61,11 @@ Start-Process -FilePath "$($PSScriptRoot)\App\Mail.OutlookSignature.exe" `
     -Wait
 ``` 
 
-<img src="docs/logon-script.png" width="600">
+<img src="docs/logon-script.png" width="400">
 
 ### Generated signature in Outlook
 
-<img src="docs/generated-signature.png" width="200">
+<img src="docs/generated-signature.png" width="600">
 
 ## Dependencies
 
