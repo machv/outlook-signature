@@ -49,7 +49,7 @@ Generated signature is stored in `%appdata%\Microsoft\Signatures` folder.
 ### Example
 
 ### Word template document
-![Word template](docs/word-template.png | width=200)
+<img src="docs/word-template.png" width="200">
 
 ### Group policy Logon script
 Set-Signature.ps1
