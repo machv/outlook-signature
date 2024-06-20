@@ -20,7 +20,7 @@ For troubleshooting, you can see generated signature in `%appdata%\Microsoft\Sig
 
 #### Word template document
 
-<img src="docs/word-template.png" width="600">
+<img src="docs/word-template.png" width="650">
 
 #### Group policy Logon script
 `Set-Signature.ps1`
@@ -31,11 +31,11 @@ Start-Process -FilePath "$($PSScriptRoot)\App\Mail.OutlookSignature.exe" `
     -Wait
 ``` 
 
-<img src="docs/logon-script.png" width="400">
+<img src="docs/logon-script.png" width="450">
 
 #### Generated signature in Outlook
 
-<img src="docs/generated-signature.png" width="600">
+<img src="docs/generated-signature.png" width="700">
 
 ## Supported variables
 
@@ -70,6 +70,7 @@ You can configure application with these options in `Mail.OutlookSignature.exe.c
 | `SignatureName`                  | Corporate signature  | Name of the signature in Outlook application |
 | `LockSignature`                  | `true`               | If set to `true`, user can't change/create new signature in Outlook |
 | `LockSignatureOverrideGroupName` | ``                   | Name of the Active Directory group with users that can change/create signatures in Outlook when lock is set |
+| `TemplatePath`                   | ``                   | Path to Word template to use for generating user signature. |
 
 
 ## Dependencies

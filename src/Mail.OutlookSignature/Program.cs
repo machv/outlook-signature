@@ -46,16 +46,20 @@ namespace Mail.OutlookSignature
 
         static void Main(string[] args)
         {
-            if (args.Length < 1)
+            string templatePath = Properties.Settings.Default.TemplatePath;
+            if (args.Length > 0)
+                templatePath = args[0];
+
+            if (string.IsNullOrWhiteSpace(templatePath))
             {
+                Console.WriteLine("Missing template path to use, please set it via TemplatePath setting or as argument");
                 Console.WriteLine("Usage: .exe <TemplatePath>");
                 return;
             }
 
-            string templatePath = args[0];
             if (!File.Exists(templatePath))
             {
-                Console.WriteLine($"ERROR: Specified Word template {templatePath} does not exists.");
+                Console.WriteLine($"ERROR: Specified Word template {templatePath} does not exist.");
                 return;
             }
 
@@ -69,7 +73,7 @@ namespace Mail.OutlookSignature
 
                 bool lockSignatureChanges = Properties.Settings.Default.LockSignature;
 
-                if(!string.IsNullOrWhiteSpace(Properties.Settings.Default.LockSignatureOverrideGroupName))
+                if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.LockSignatureOverrideGroupName))
                 {
                     foreach (string groupName in DirectoryServicesUtilities.GetGroupsOfUser(Environment.UserName))
                     {
@@ -192,7 +196,7 @@ namespace Mail.OutlookSignature
                 if (!System.IO.Directory.Exists(path))
                     System.IO.Directory.CreateDirectory(path);
 
-                
+
                 var currentDoc = wordApp.Documents.Open(temp);
                 currentDoc.SaveAs(path + signatureName + ".rtf", Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatRTF);
                 currentDoc.SaveAs(path + signatureName + ".txt", Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatEncodedText);

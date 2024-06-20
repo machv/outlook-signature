@@ -49,5 +49,14 @@ namespace Mail.OutlookSignature.Properties {
                 return ((string)(this["LockSignatureOverrideGroupName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TemplatePath {
+            get {
+                return ((string)(this["TemplatePath"]));
+            }
+        }
     }
 }
