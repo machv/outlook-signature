@@ -52,6 +52,13 @@ namespace Mail.OutlookSignature
                 return;
             }
 
+            string templatePath = args[0];
+            if (!File.Exists(templatePath))
+            {
+                Console.WriteLine($"ERROR: Specified Word template {templatePath} does not exists.");
+                return;
+            }
+
             try
             {
                 if (Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Microsoft").OpenSubKey("Office") == null)
@@ -60,24 +67,23 @@ namespace Mail.OutlookSignature
                     return;
                 }
 
-                bool canChangeSignature = Properties.Settings.Default.LockSignature;
+                bool lockSignatureChanges = Properties.Settings.Default.LockSignature;
 
                 if(!string.IsNullOrWhiteSpace(Properties.Settings.Default.LockSignatureOverrideGroupName))
                 {
                     foreach (string groupName in DirectoryServicesUtilities.GetGroupsOfUser(Environment.UserName))
                     {
                         if (groupName == Properties.Settings.Default.LockSignatureOverrideGroupName)
-                            canChangeSignature = true;
+                            lockSignatureChanges = false;
                     }
                 }
 
                 Dictionary<string, string> variables = GetLdapVariables();
 
-                string template = args[0];
                 string signatureName = Properties.Settings.Default.SignatureName;
 
-                string temp = System.IO.Path.GetTempFileName();
-                System.IO.File.Copy(template, temp, true);
+                string temp = Path.GetTempFileName();
+                File.Copy(templatePath, temp, true);
 
                 string vCard = GetQrCodeContent(variables);
 
@@ -168,19 +174,31 @@ namespace Mail.OutlookSignature
                         elem.Remove();
                 }
 
+                var wordApp = new Microsoft.Office.Interop.Word.Application();
+                string officeVersion = wordApp.Version.ToString();
+
+                // disable roaming signatures as we are enforcing local template
+                var outlookSetup = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software").
+                    OpenSubKey("Microsoft").
+                    OpenSubKey("Office").
+                    OpenSubKey(officeVersion).
+                    OpenSubKey("Outlook").
+                    OpenSubKey("Setup", true);
+
+                outlookSetup.SetValue("DisableRoamingSignaturesTemporaryToggle", 1, RegistryValueKind.DWord);
+
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Microsoft\\Signatures\\";
 
                 if (!System.IO.Directory.Exists(path))
                     System.IO.Directory.CreateDirectory(path);
 
-                var wordApp = new Microsoft.Office.Interop.Word.Application();
+                
                 var currentDoc = wordApp.Documents.Open(temp);
                 currentDoc.SaveAs(path + signatureName + ".rtf", Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatRTF);
                 currentDoc.SaveAs(path + signatureName + ".txt", Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatEncodedText);
                 currentDoc.SaveAs(path + signatureName + ".htm", Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatHTML);
                 currentDoc.Close();
 
-                string officeVersion = wordApp.Version.ToString();
 
                 var mailSettings = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software").
                     OpenSubKey("Microsoft").
@@ -202,7 +220,7 @@ namespace Mail.OutlookSignature
 
                 wordApp.Quit();
 
-                if (!canChangeSignature)
+                if (lockSignatureChanges)
                 {
                     // When we write this registry keys, it blocks changing signature in outlook
                     mailSettings.SetValue("ReplySignature", signatureName);
