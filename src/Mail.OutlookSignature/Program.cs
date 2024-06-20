@@ -52,7 +52,7 @@ namespace Mail.OutlookSignature
 
             if (string.IsNullOrWhiteSpace(templatePath))
             {
-                Console.WriteLine("Missing template path to use, please set it via TemplatePath setting or as argument");
+                Console.WriteLine("Missing template path to use, please set it via TemplatePath setting in .config file or pass it as argument.");
                 Console.WriteLine("Usage: .exe <TemplatePath>");
                 return;
             }
